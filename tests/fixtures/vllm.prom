@@ -1,0 +1,10 @@
+# Synthetic fixture matching vLLM 0.29.0 documented/native metric names.
+# TYPE vllm:prompt_tokens counter
+vllm:prompt_tokens_total{model_name="fixture-model",engine="0"} 1000
+# TYPE vllm:generation_tokens counter
+vllm:generation_tokens_total{model_name="fixture-model",engine="0"} 2000
+# TYPE vllm:num_requests_running gauge
+vllm:num_requests_running{model_name="fixture-model",engine="0"} 2
+vllm:num_requests_waiting{model_name="fixture-model",engine="0"} 1
+vllm:kv_cache_usage_perc{model_name="fixture-model",engine="0"} 0.375
+process_start_time_seconds 100

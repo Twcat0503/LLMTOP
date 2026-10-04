@@ -1,0 +1,8 @@
+# Synthetic fixture for the llama.cpp server README metric contract.
+# No claim of a tested native build until a real server gate is run.
+# TYPE llamacpp:prompt_tokens_total counter
+llamacpp:prompt_tokens_total 500
+llamacpp:tokens_predicted_total 1500
+llamacpp:requests_processing 1
+llamacpp:requests_deferred 0
+llamacpp:n_tokens_max 4096

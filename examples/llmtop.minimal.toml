@@ -1,0 +1,18 @@
+schema_version = 1
+
+[[hosts]]
+id = "local"
+label = "Local host"
+collector = "local"
+hardware_scope = "host"
+gpu_provider = "auto"
+
+[[services]]
+id = "vllm"
+label = "vLLM"
+host_id = "local"
+engine = "vllm"
+api_url = "http://127.0.0.1:8000"
+# For multiple series, select one explicitly instead of summing replicas/ranks:
+# [services.metric_selection]
+# model_name = "example-model"

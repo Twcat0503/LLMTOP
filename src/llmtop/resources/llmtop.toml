@@ -1,0 +1,33 @@
+# LLMTOP user configuration. This starts host monitoring only.
+# Edit this file before enabling an engine; no inference probes are sent.
+schema_version = 1
+
+[monitor]
+refresh_interval_seconds = 2
+history_seconds = 600
+
+[web]
+bind_host = "127.0.0.1"
+port = 8787
+
+[[hosts]]
+id = "local"
+label = "Local host"
+collector = "local"
+hardware_scope = "host" # Change to "vm" or "container" when appropriate.
+gpu_provider = "auto"
+
+# Uncomment and edit to monitor an existing vLLM server.
+# [[services]]
+# id = "example-vllm"
+# label = "Example vLLM"
+# host_id = "local"
+# engine = "vllm"
+# api_url = "http://127.0.0.1:8000"
+# [services.metric_selection]
+# model_name = "example-model"
+#
+# For bearer auth, reference a server-side environment variable:
+# [services.metrics_auth]
+# kind = "bearer"
+# token_env = "LLMTOP_METRICS_TOKEN"

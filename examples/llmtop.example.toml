@@ -1,0 +1,135 @@
+# M1 configuration example. M2 services and request ingestion remain disabled.
+# TUI and Web share the same collector and snapshot contract.
+schema_version = 1
+
+[monitor]
+refresh_interval_seconds = 2
+stale_after_seconds = 10
+history_seconds = 600
+http_timeout_seconds = 3
+max_concurrent_polls = 8
+max_response_bytes = 4194304
+
+[tui]
+enabled = true
+theme = "auto"
+ascii = false
+# When a backend is already running, connect instead of scraping twice.
+# connect_url = "http://127.0.0.1:8787"
+
+[web]
+enabled = true
+bind_host = "127.0.0.1"
+port = 8787
+enable_remote = false
+allowed_origins = ["http://127.0.0.1:8787"]
+update_transport = "sse"
+poll_fallback_seconds = 2
+
+[privacy]
+source_ip_mode = "hmac"
+source_hash_secret_env = "LLMTOP_SOURCE_HASH_SECRET"
+capture_prompt = false
+capture_response = false
+request_retention_seconds = 3600
+max_request_events = 10000
+
+[[hosts]]
+id = "local"
+label = "Local Mac or Linux host"
+collector = "local"
+hardware_scope = "host"
+gpu_provider = "auto"
+# auto does not imply every GPU field is available; missing fields are N/A.
+
+[[hosts]]
+id = "gpu-remote"
+label = "Remote Linux GPU host"
+collector = "disabled"
+# Engine HTTP endpoints do not expose remote host hardware by themselves.
+# A remote agent/exporter is a later milestone and is not enabled here.
+
+[[services]]
+id = "vllm-remote"
+label = "Remote vLLM"
+host_id = "gpu-remote"
+engine = "vllm"
+enabled = true
+api_url = "https://vllm.example.invalid"
+metrics_url = "https://vllm.example.invalid/metrics"
+health_path = "/health"
+
+[services.api_auth]
+kind = "bearer"
+token_env = "LLMTOP_VLLM_API_TOKEN"
+
+[services.metrics_auth]
+kind = "bearer"
+token_env = "LLMTOP_VLLM_METRICS_TOKEN"
+# Metrics credentials may differ from the inference API credential.
+
+[services.metric_selection]
+model_name = "example-model"
+# Replica/rank selection will be validated by a version-specific profile.
+
+[[services]]
+id = "llamacpp-local"
+label = "Local llama.cpp server"
+host_id = "local"
+engine = "llamacpp"
+enabled = true
+api_url = "http://127.0.0.1:8080"
+metrics_url = "http://127.0.0.1:8080/metrics"
+health_path = "/health"
+slots_path = "/slots"
+# Requires --metrics on llama.cpp. Router model query is profile-dependent.
+
+[services.api_auth]
+kind = "none"
+
+[services.metrics_auth]
+kind = "none"
+
+[[services]]
+id = "sglang-remote"
+label = "Remote SGLang"
+host_id = "gpu-remote"
+engine = "sglang"
+enabled = false
+api_url = "https://sglang.example.invalid"
+metrics_url = "https://sglang.example.invalid/metrics"
+deployment_profile = "unified"
+# Enable metrics on the existing engine; LLMTOP does not start it.
+
+[services.api_auth]
+kind = "bearer"
+token_env = "LLMTOP_SGLANG_API_TOKEN"
+
+[services.metrics_auth]
+kind = "bearer"
+token_env = "LLMTOP_SGLANG_METRICS_TOKEN"
+
+[[services]]
+id = "ollama-local"
+label = "Local Ollama"
+host_id = "local"
+engine = "ollama"
+enabled = false
+api_url = "http://127.0.0.1:11434"
+loaded_models_path = "/api/ps"
+# No invented metrics, queue, or KV endpoint.
+# Usage comes only from observed existing requests (final response/chunk).
+
+[services.api_auth]
+kind = "none"
+
+[[request_sources]]
+id = "gateway-events"
+kind = "jsonl"
+enabled = false
+path = "./data/request-events.jsonl"
+service_ids = ["vllm-remote", "ollama-local"]
+coverage = "partial"
+trust = "verified_gateway"
+# Optional M2 source. Only configure an authorized existing event producer.
+# Relative paths resolve against the directory containing this TOML file.

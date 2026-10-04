@@ -1,0 +1,22 @@
+name: Bug report
+description: Report a reproducible behavior problem using sanitized examples.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private endpoint inventories, raw telemetry or request content. See SECURITY.md for vulnerability reporting.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed and expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal sanitized reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: LLMTOP, OS, Python, engine and browser versions

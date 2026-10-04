@@ -1,0 +1,69 @@
+# Existing machine-specific prototype; contains private settings and credentials.
+/llmtop
+
+# Local configuration and secrets.
+/llmtop.toml
+*.local.toml
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+/.remote/
+/.tools/
+
+# Workstation instructions, private audits and release scan inputs.
+/AGENTS.md
+/docs/TEST-ENVIRONMENT.md
+/docs/M1-VALIDATION.md
+/docs/PROTOTYPE-AUDIT.md
+/docs/*-LOCAL.md
+/docs/design/
+/.release-private-patterns
+/source-manifest.json
+/.llmtop-task
+/.bootstrap/
+/.cache/
+/.tmp/
+*.pub
+*.p12
+*.pfx
+
+# Python environments and build output (for later implementation).
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+node_modules/
+*.tsbuildinfo
+coverage/
+/artifacts/
+playwright-report/
+test-results/
+/src/llmtop/web_static/*
+!/src/llmtop/web_static/.gitkeep
+
+# Collected telemetry may contain private request metadata.
+/data/
+/examples/data/
+/logs/
+/exports/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Local editor and OS files.
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
