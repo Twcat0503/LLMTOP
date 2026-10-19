@@ -54,7 +54,8 @@ exclude = [
 artifacts = ["/src/llmtop/web_static/**"]
 include = [
     "/src", "/tests", "/scripts", "/frontend", "/examples", "/docs",
-    "/.github", "/.editorconfig", "/.gitattributes", "/.gitignore", "/README.md", "/LICENSE",
+    "/.github", "/.editorconfig", "/.gitattributes", "/.gitignore", "/README.md", "/README.zh-TW.md",
+    "/LICENSE",
     "/CONTRIBUTING.md", "/CHANGELOG.md", "/SECURITY.md", "/pyproject.toml", "/uv.lock",
 ]
 
