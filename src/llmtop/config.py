@@ -124,6 +124,23 @@ class PrivacyConfig(ConfigModel):
     max_request_events: int = Field(default=10000, ge=1)
 
 
+class UpdateConfig(ConfigModel):
+    source_url: str = ""
+    allow_prerelease: bool = False
+
+    @field_validator("source_url")
+    @classmethod
+    def validate_source_url(cls, value: str) -> str:
+        if not value:
+            return value
+        url = urlsplit(value)
+        if url.scheme != "https" or not url.hostname:
+            raise ValueError("Update source must be an absolute HTTPS URL")
+        if url.username or url.password or url.query or url.fragment:
+            raise ValueError("Update source must not contain credentials, query or fragment")
+        return value.rstrip("/") + "/"
+
+
 class RequestSourceConfig(ConfigModel):
     id: str
     kind: Literal["jsonl"]
@@ -140,6 +157,7 @@ class Config(ConfigModel):
     tui: TuiConfig = Field(default_factory=TuiConfig)
     web: WebConfig = Field(default_factory=WebConfig)
     privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
+    update: UpdateConfig = Field(default_factory=UpdateConfig)
     hosts: list[HostConfig]
     services: list[ServiceConfig] = Field(default_factory=list)
     request_sources: list[RequestSourceConfig] = Field(default_factory=list)

@@ -10,6 +10,13 @@ history_seconds = 600
 bind_host = "127.0.0.1"
 port = 8787
 
+# Uncomment to enable version checks and llmtop update for managed installs.
+# source_url points at a directory that hosts llmtop-<version>-py3-none-any.whl
+# plus a matching SHA256SUMS manifest, HTTPS only.
+# [update]
+# source_url = "https://example.invalid/llmtop/releases/latest/download/"
+# allow_prerelease = false
+
 [[hosts]]
 id = "local"
 label = "Local host"

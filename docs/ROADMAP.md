@@ -1,12 +1,12 @@
 # 開發路線與驗收計畫
 
-更新日期：2026-10-04。M0 文件已完成，M1 為可使用的 alpha 首版；llama.cpp 實機與 macOS gate 尚缺，M1 未全部驗收。公開證據見 [VALIDATION](VALIDATION.md)，近期項目見 [TODO](TODO.md)。
+更新日期：2026-10-19。M0 文件已完成，M1 為可使用的 alpha 首版；llama.cpp 實機與 macOS gate 尚缺，M1 未全部驗收。公開證據見 [VALIDATION](VALIDATION.md)，近期項目見 [TODO](TODO.md)。
 
 ## M1：共用 MVP 與 TUI／Web
 
 已建立 packages／固定依賴、snapshot、collector／rates／epoch／history、vLLM／llama.cpp adapters、host／NVIDIA providers、TUI、REST／SSE、React Web、once／doctor／schema 與 wheel。Linux 首輪已通過合成負載及真實 vLLM／NVIDIA 讀取。
 
-2026-10-04 增加使用者安裝／PATH、裸指令 TUI、固定設定／初始化與 Web 啟動。版本檢查／自動更新依維護者決定，留待基礎版本與官方發佈來源完成後。
+2026-10-04 增加使用者安裝／PATH、裸指令 TUI、固定設定／初始化與 Web 啟動。2026-10-19 增加版本檢查、更新與 rollback（`llmtop update`／`rollback`）；來源由 `[update].source_url` 指定，無內建預設，驗收待實際發佈資產。
 
 必要 gate：
 
@@ -36,6 +36,6 @@ Read-only agent／exporter 的身份、認證、TLS、clock skew；container／h
 - [x] 本機 Git 基礎與 LF 規則；發布阻擋條件與驗證順序已整理。
 - [ ] 正式 repository、私密回報管道與公開 CI。
 - [ ] 完整 release assets／校驗值與首次公開發佈。
-- [ ] 官方版本檢查、自動更新與失敗復原。
+- [ ] 版本檢查、更新與 rollback 已實作（`[update].source_url`＋`SHA256SUMS`），待實際 release 資產驗收。
 
 基礎版本保持 alpha；發佈前 gate 見 [RELEASING](RELEASING.md)。

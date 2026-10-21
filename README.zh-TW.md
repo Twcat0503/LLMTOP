@@ -88,7 +88,7 @@ python3 scripts/install_user.py \
 
 安裝工具為 Linux／macOS 使用者建立隔離環境，預設放在 `~/.local/share/llmtop`，指令放在 `~/.local/bin`。`--ensure-path` 為 Bash／Zsh／POSIX sh 加入可重複執行的 PATH 設定；重新開啟登入 shell 後，可從任意目錄使用同一版本。立即使用可執行 `export PATH="$HOME/.local/bin:$PATH"`。既有同名指令或非本工具管理的目錄會被拒絕覆寫。
 
-`--install-dir`／`--bin-dir` 可改位置；`--gpu` 加入 NVIDIA 可選依賴，`--constraints` 使用匯出的固定依賴，`--wheelhouse` 支援離線安裝。官方版本檢查與自動更新仍為後續項目。
+`--install-dir`／`--bin-dir` 可改位置；`--gpu` 加入 NVIDIA 可選依賴，`--constraints` 使用匯出的固定依賴，`--wheelhouse` 支援離線安裝。安裝完成後，`llmtop update` 會檢查設定為 `[update].source_url` 的發佈來源（HTTPS，以 `SHA256SUMS` 驗證）並原子啟用新環境；`llmtop rollback` 還原前一版本。預設未設定更新來源。
 
 ## 開始使用
 
@@ -153,6 +153,8 @@ llmtop tui --connect http://127.0.0.1:8787
 | `llmtop web` / `llmtop serve` | Web backend；`--port` 改埠號；`--open`／`--no-open` 控制瀏覽器 |
 | `llmtop tui --connect URL` | TUI 接上既有 backend |
 | `llmtop schema` | 輸出 snapshot 的 JSON schema |
+| `llmtop update` | 檢查已設定的發佈來源並安裝新版本；`--check` 只回報，`--wheel` 離線安裝 |
+| `llmtop rollback` | 還原上次更新保留的前一版本 |
 
 全域選項：`--config`、`--demo`、`--ascii`、`--theme dark|light|auto`、`--version`。
 

@@ -1,6 +1,6 @@
 # 目前狀態與開發代辦
 
-更新日期：2026-10-04。版本 0.1.0，未發佈的 M1 alpha 基礎版本。共用 collector、snapshot／history、rate／epoch、vLLM／llama.cpp、host／NVIDIA、TUI／Web／API／CLI 已建立。證據見 [VALIDATION](VALIDATION.md)。
+更新日期：2026-10-19。版本 0.1.0，未發佈的 M1 alpha 基礎版本。共用 collector、snapshot／history、rate／epoch、vLLM／llama.cpp、host／NVIDIA、TUI／Web／API／CLI 已建立。證據見 [VALIDATION](VALIDATION.md)。
 
 ## 日常使用與更新
 
@@ -10,10 +10,10 @@
 | U02 裸指令 | 已實作並通過 Linux 驗收 | llmtop 開 TUI；非 TTY 提示 once／Web；合成資料須 --demo |
 | U03 設定／初始化 | 已實作並通過 Linux 驗收 | --config → LLMTOP_CONFIG → 使用者設定 → 舊 cwd；init 不覆寫，不同目錄讀同一固定設定 |
 | U04 Web 啟動 | 已實作並通過 Linux 驗收 | web／serve、--open／--no-open；成功啟動後開瀏覽器，SSH／headless 列 URL／forwarding |
-| U05 官方來源／版本檢查 | 延後 | 基礎版本與開源準備完成後確定 repository、套件來源、metadata 與版本規則 |
-| U06 更新／復原 | 延後 | 依 U05 官方包更新 Python／Web，保留設定、驗證新版本、失敗復原與重啟說明 |
+| U05 官方來源／版本檢查 | 已實作，待驗收 | `[update].source_url` 指定 HTTPS release 下載基底，抓 `SHA256SUMS` 解析 wheel／constraints；版本比較預設跳過 prerelease |
+| U06 更新／復原 | 已實作，待驗收 | `llmtop update` 原子切換環境、保留前版並提示重啟；`llmtop rollback` 還原；下載、校驗或檢查失敗維持現行版本 |
 
-U05／U06 尚無命令，不把任意索引的同名套件視為官方來源。
+U05／U06 命令已存在，但無內建預設來源；未設定 `[update].source_url` 時不進行任何遠端檢查，也不把任意索引的同名套件視為官方來源。驗收需實際 release 資產與隔離環境重驗。
 
 ## 本次 Git／發布收尾（2026-10-04）
 
