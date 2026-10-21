@@ -88,7 +88,7 @@ python3 scripts/install_user.py \
 
 The installer creates an isolated environment for Linux/macOS users, by default in `~/.local/share/llmtop`, and places the command in `~/.local/bin`. `--ensure-path` adds repeatable PATH setup for Bash/Zsh/POSIX sh; after reopening a login shell, the same version works from any directory. To use it immediately: `export PATH="$HOME/.local/bin:$PATH"`. An existing command of the same name, or a directory not managed by this tool, is never overwritten.
 
-Use `--install-dir`/`--bin-dir` to relocate, `--gpu` to add the NVIDIA extra, `--constraints` for exported pinned dependencies, and `--wheelhouse` for offline installs. A new environment activates only after dependency, version, and schema checks pass. Official update checks are a later item.
+Use `--install-dir`/`--bin-dir` to relocate, `--gpu` to add the NVIDIA extra, `--constraints` for exported pinned dependencies, and `--wheelhouse` for offline installs. A new environment activates only after dependency, version, and schema checks pass. After installation, `llmtop update` checks the release source configured as `[update].source_url` (HTTPS, verified against `SHA256SUMS`) and activates a new environment atomically; `llmtop rollback` restores the previous version. No update source is configured by default.
 
 ## Quick start
 
@@ -153,6 +153,8 @@ llmtop tui --connect http://127.0.0.1:8787
 | `llmtop web` / `llmtop serve` | Web backend; `--port` to change the port; `--open`/`--no-open` to control the browser |
 | `llmtop tui --connect URL` | TUI attached to an existing backend |
 | `llmtop schema` | Print the snapshot JSON schema |
+| `llmtop update` | Check the configured release source and install a newer version; `--check` only reports, `--wheel` installs offline |
+| `llmtop rollback` | Restore the previous version kept by the last update |
 
 Global flags: `--config`, `--demo`, `--ascii`, `--theme dark|light|auto`, `--version`.
 

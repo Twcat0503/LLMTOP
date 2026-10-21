@@ -62,4 +62,4 @@ python3 scripts/install_user.py \
 
 未完成上述證據前，版本保持未發佈，不因本機 commit／tag 或已有 wheel 就宣告完成。
 
-U05／U06 待基礎版本與官方來源完成後實作；目前 installer 僅接受明確提供的 wheel。
+更新來源契約已實作：`[update].source_url` 指向 HTTPS 的 release 下載基底，該處必須提供 `SHA256SUMS`，涵蓋 `llmtop-<version>-py3-none-any.whl`（及可選的 `llmtop-<version>-dependency-constraints.txt`）；檔名、版本與校驗值不符即拒絕更新。以實際 release 資產驗收仍待完成。

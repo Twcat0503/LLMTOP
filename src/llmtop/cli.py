@@ -76,7 +76,99 @@ def parser() -> argparse.ArgumentParser:
     initialize.add_argument("--config", type=Path, default=argparse.SUPPRESS)
     initialize.add_argument("--print", dest="print_template", action="store_true")
     commands.add_parser("schema")
+    update = commands.add_parser(
+        "update", help="Check for or install an update in a managed user install"
+    )
+    update.add_argument("--check", action="store_true", help="Report the latest version only")
+    update.add_argument(
+        "--wheel", type=Path, help="Install this wheel instead of using the update source"
+    )
+    commands.add_parser("rollback", help="Switch a managed install back to the previous version")
     return root
+
+
+def run_update(args, console: Console) -> int:
+    from llmtop.installer import InstallError
+    from llmtop.update import (
+        UpdateError,
+        check_for_update,
+        detect_install_root,
+        rollback,
+        update_from_source,
+        update_from_wheel,
+    )
+
+    try:
+        root = detect_install_root()
+        if root is None:
+            console.print(
+                "This LLMTOP runtime is not a managed user install; update it with the "
+                "installer you used or through your package manager.",
+                style="red",
+            )
+            return 2
+        if args.command == "rollback":
+            receipt = rollback(root)
+            console.print(
+                f"Rolled back to LLMTOP {receipt['version']}. Restart llmtop to use it.",
+                markup=False,
+            )
+            return 0
+        if args.wheel is not None:
+            receipt = update_from_wheel(root, args.wheel)
+            console.print(
+                f"Updated LLMTOP to {receipt['version']}. Restart llmtop to use it.",
+                markup=False,
+            )
+            return 0
+        config = load_config(args.config)
+        if not config.update.source_url:
+            console.print(
+                "No update source is configured. Set [update].source_url in the configuration "
+                "or install a wheel with llmtop update --wheel.",
+                style="yellow",
+                markup=False,
+            )
+            return 2
+        result = check_for_update(config.update.source_url, config.update.allow_prerelease)
+        console.print(f"Current: {result.current}", markup=False)
+        if result.latest is None:
+            console.print("Update source lists no LLMTOP release.", style="yellow", markup=False)
+            return 2
+        console.print(f"Latest:  {result.latest}", markup=False)
+        if not result.newer:
+            console.print("This install is up to date.")
+            return 0
+        if args.check:
+            console.print("Run llmtop update to install it.")
+            return 0
+        receipt = update_from_source(root, config.update.source_url, config.update.allow_prerelease)
+        if receipt is None:
+            console.print("This install is up to date.")
+        else:
+            console.print(
+                f"Updated LLMTOP to {receipt['version']}. Restart llmtop to use it.",
+                markup=False,
+            )
+        return 0
+    except (UpdateError, InstallError) as exc:
+        console.print(str(exc), style="red", markup=False)
+        return 2
+    except ConfigError:
+        console.print(
+            "Unable to read the configuration. Run llmtop init, or select a file with --config.",
+            style="red",
+            markup=False,
+        )
+        return 2
+    except (OSError, ValueError):
+        # Keep detailed tool output in the private installation log.
+        console.print(
+            "LLMTOP could not update; check the update source, wheel and installation.log",
+            style="red",
+            markup=False,
+        )
+        return 2
 
 
 async def once(config, demo: bool, samples: int) -> Snapshot:
@@ -98,6 +190,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "schema":
         print(json.dumps(Snapshot.model_json_schema(mode="serialization"), indent=2))
         return 0
+    if args.command in {"update", "rollback"}:
+        return run_update(args, console)
     try:
         if args.command == "init":
             if args.print_template:
