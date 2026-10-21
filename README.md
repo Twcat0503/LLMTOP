@@ -6,7 +6,7 @@
 
 **A TUI and Web monitor for self-hosted LLM inference**
 
-Tokens, throughput, queue depth, KV cache, and host hardware — vLLM, llama.cpp, and the machines they run on, in one read-only view.
+Tokens, throughput, queue depth, KV cache, and host hardware — vLLM, llama.cpp, Strata, and the machines they run on, in one read-only view.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](pyproject.toml)
@@ -19,7 +19,7 @@ Tokens, throughput, queue depth, KV cache, and host hardware — vLLM, llama.cpp
 
 ## What is LLMTOP?
 
-LLMTOP is a terminal (TUI) and web dashboard for self-hosted LLM inference services. It puts the engines you run — vLLM, llama.cpp — and the host hardware behind them in a single view: input/output tokens and tokens/sec, running/waiting requests, KV cache usage, CPU/RAM/swap, and NVIDIA device stats where available.
+LLMTOP is a terminal (TUI) and web dashboard for self-hosted LLM inference services. It puts the engines you run — vLLM, llama.cpp, Strata — and the host hardware behind them in a single view: input/output tokens and tokens/sec, running/waiting requests, KV cache usage, CPU/RAM/swap, and NVIDIA device stats where available.
 
 The TUI and the Web share one collector, one snapshot, and one history buffer, so both surfaces always show the same numbers. LLMTOP is read-only by default: it polls observability endpoints (`/metrics` and friends) and never sends inference requests.
 
@@ -65,6 +65,7 @@ The TUI and the Web share one collector, one snapshot, and one history buffer, s
 | --- | --- | --- | --- |
 | vLLM (OpenAI server) | Verified on Linux | Token counters + t/s, running/waiting, native KV ratio via `/metrics` | Verified against vLLM 0.29.0 on Ubuntu 26.04 |
 | llama.cpp server | Implemented, synthetic fixtures only | Token counters, processing/deferred gauges via `/metrics` | Requires `--metrics`; live-server gate open; context capacity is not KV usage |
+| Strata server | Implemented, synthetic fixtures only | Token counters + t/s, running/waiting, model name via vLLM-named `/metrics` | `/metrics` defaults to JSON; scrape needs `Accept: text/plain` or `?format=prometheus`; the KV field is the running request's context share, not KV pool occupancy; live-server gate open |
 | SGLang server | On the roadmap | — | Planned for M2 |
 | Ollama | On the roadmap | — | Planned for M2 |
 

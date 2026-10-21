@@ -63,7 +63,7 @@ class ServiceConfig(ConfigModel):
     id: str
     label: str
     host_id: str
-    engine: Literal["vllm", "llamacpp", "sglang", "ollama"]
+    engine: Literal["vllm", "llamacpp", "sglang", "ollama", "strata"]
     enabled: bool = True
     api_url: str
     metrics_url: str | None = None

@@ -36,6 +36,18 @@ MAPPINGS = {
         "engine_waiting_requests": ("requests", ("llamacpp:requests_deferred",)),
         "kv_cache_usage_ratio": ("ratio", ()),
     },
+    "strata": {
+        # Strata renders vLLM's names with a model_name label (serve/prometheus.py).
+        "engine_prompt_tokens_total": ("tokens", ("vllm:prompt_tokens_total",)),
+        "engine_generation_tokens_total": ("tokens", ("vllm:generation_tokens_total",)),
+        "engine_running_requests": ("requests", ("vllm:num_requests_running",)),
+        "engine_waiting_requests": ("requests", ("vllm:num_requests_waiting",)),
+        "kv_cache_usage_ratio": ("ratio", ("vllm:kv_cache_usage_perc",)),
+    },
+}
+# Strata's kv_cache_usage_perc is the running request's share of the context, not a KV pool ratio.
+SEMANTICS_OVERRIDES: dict[str, dict[str, str]] = {
+    "strata": {"kv_cache_usage_ratio": "native_context_share"},
 }
 RATE_NAMES = {
     "engine_prompt_tokens_total": "input_tps",
@@ -98,6 +110,9 @@ class EngineAdapter:
                 Health.AUTH_ERROR,
                 Status.PERMISSION_DENIED,
             )
+        if config.engine == "strata":
+            # Strata answers /metrics in JSON unless the scrape negotiates the Prometheus text format.
+            metric_headers.setdefault("Accept", "text/plain; version=0.0.4")
         metrics_url = config.metrics_url or config.api_url + "/metrics"
         health_url = urljoin(config.api_url + "/", config.health_path.lstrip("/"))
         health_result, metrics_result = await asyncio.gather(
@@ -139,7 +154,7 @@ class EngineAdapter:
         except (MetricError, UnicodeError):
             return self.failure("Malformed metrics response", Health.DEGRADED, Status.ERROR)
         service = self.normalize(samples, time.monotonic(), health, reason)
-        if config.engine == "llamacpp" and config.slots_path:
+        if config.engine in {"llamacpp", "strata"} and config.slots_path:
             # Slots are optional live observations, never cumulative counters or waiting lists.
             try:
                 code, body = await self.fetcher.get(
@@ -231,11 +246,14 @@ class EngineAdapter:
                 observed_at=now,
                 last_success_at=now if sample else None,
                 coverage="complete" if sample else "unknown",
-                semantics="engine_processed"
-                if unit == "tokens"
-                else "native_scheduler"
-                if unit == "requests"
-                else "native_kv_pool",
+                semantics=SEMANTICS_OVERRIDES.get(config.engine, {}).get(metric)
+                or (
+                    "engine_processed"
+                    if unit == "tokens"
+                    else "native_scheduler"
+                    if unit == "requests"
+                    else "native_kv_pool"
+                ),
                 reason=field_reason,
             )
             observations[metric] = observation

@@ -4,6 +4,8 @@
 
 2026-10-03 在 Ubuntu 26.04／Python 3.14.4 完成 M1 首輪：真實 vLLM 0.29.0 counters／rates／counts／KV 與 NVIDIA NVML fields。llama.cpp 僅通過合成 fixtures；實機與 macOS 尚未驗證。證據見 [公開摘要](VALIDATION.md)。
 
+2026-10-21 核對 Strata server 官方原始碼（`serve/prometheus.py`、`serve/server.py`，main 分支）；無實機連線測試。
+
 ## 1. 支援狀態的意義
 
 | 狀態 | 意義 |
@@ -24,6 +26,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | vLLM OpenAI server | 文件確認：counter 差分 | 文件確認：scheduler gauges | 原生 metrics 為彙總；需另外接事件 | 文件確認：KV 使用比率；容量依版本 | 額外 gateway／event source | M1 |
 | llama.cpp server | 條件可用：啟用 metrics 後 counter 差分 | 條件可用：processing／deferred | slots 可觀察 running 槽位，不能保證完整 waiting 清單 | 未確認通用使用率；context 不作替代 | 額外 gateway／event source | M1 |
+| Strata server | 文件確認：counter 差分（vLLM 命名，僅計已完成請求） | 文件確認：running／waiting gauges | 原生 metrics 為彙總；需另外接事件 | 條件可用：context 佔用比（名義為 KV，不作 KV pool 宣稱） | 額外 gateway／event source | M2 |
 | SGLang server | 條件可用：啟用 metrics 後 counter 差分 | 文件確認：running／queue gauges | 原生彙總；詳細狀態需事件 | 條件可用：按版本及 pool 語意區分 | 額外 gateway／event source | M2 |
 | Ollama 原生 API | 條件可用：觀察請求最終 usage／timings | 沒有已確認的通用 scheduler API | 額外 gateway／event source；只能展示被觀察請求 | 沒有已確認的通用 KV occupancy API | 額外 gateway／event source | M2 |
 | 僅 OpenAI-compatible API | 回應有 usage 且可觀察時才可用 | 不由 API 相容性推定 | 以已授權請求事件為主 | 未確認 | 以事件資料為主 | M3 候選 |
@@ -51,6 +54,10 @@ llama.cpp 官方列出 Apple Silicon／Metal 與多種 Linux 可用的計算 bac
 `/api/ps` 提供已載入模型與其記憶體資料，不是請求清單。tokens 與 timing 出現在生成回應，串流則位於最終 `done=true` chunk；時間單位為 ns。被動 dashboard 無法讀取其他 client 已收到的回應，需要 client／gateway 的既有觀測資料。資料來源：[List running models](https://docs.ollama.com/api/ps)、[Usage](https://docs.ollama.com/api/usage)。
 
 官方確認 Apple GPU 可使用 Metal。這只證明 Ollama 的計算 backend 能用 Metal，並不保證 LLMTOP 能從外部取得完整 Apple GPU utilization。資料來源：[Hardware support](https://docs.ollama.com/gpu)。
+
+### Strata
+
+Strata server 的 `/metrics` 預設回傳 JSON；只有請求帶 `Accept: text/plain`／openmetrics 或 query `?format=prometheus` 才輸出 Prometheus 文字格式，內容採 vLLM 的 metric 名稱（`vllm:prompt_tokens_total`、`vllm:generation_tokens_total`、`vllm:num_requests_running`、`vllm:num_requests_waiting`、`vllm:kv_cache_usage_perc`），且一律帶 `model_name` label。token counters 只於請求完成時累計，rate 反映完成吞吐。`vllm:kv_cache_usage_perc` 的官方定義是「執行中請求佔用 context 的比率（1 = 滿）」，不是 KV pool 使用率；LLMTOP 以 `native_context_share` 語意標記展示。另有 `/metrics/prometheus` 恆為文字格式但採 llama-server（`llamacpp:*`）命名且不帶 label，故不用作映射來源。`/health` 恆回 200 並附 `loaded` 旗標，因此模型載入中與已就緒在 LLMTOP 都顯示 REACHABLE。`/slots` 採 llama.cpp 風格槽位格式（含 `n_ctx`／`n_prompt_tokens`），可選介接。資料來源：[serve/prometheus.py](https://github.com/Niko1221/Strata/blob/main/serve/prometheus.py)、[serve/server.py](https://github.com/Niko1221/Strata/blob/main/serve/server.py)。
 
 ## 3. LLMTOP 本身的 OS／硬體目標
 

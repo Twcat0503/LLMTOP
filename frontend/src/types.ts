@@ -16,7 +16,7 @@ export interface Snapshot { schema_version: number; runtime_id: string; snapshot
 export interface Point { timestamp: string; snapshot_seq: number; value: number | null; status: string; }
 export interface Series { id: string; metric: string; unit: string; points: Point[]; }
 export interface History { runtime_id: string; series: Series[]; truncated: boolean; window_seconds: number; }
-export const engineName = (engine: string) => ({ vllm: 'vLLM', llamacpp: 'llama.cpp', sglang: 'SGLang', ollama: 'Ollama' }[engine] ?? engine);
+export const engineName = (engine: string) => ({ vllm: 'vLLM', llamacpp: 'llama.cpp', sglang: 'SGLang', ollama: 'Ollama', strata: 'Strata' }[engine] ?? engine);
 export const value = (metric?: Observation): number | null => metric?.status === 'ok' ? metric.value : null;
 export const number = (metric?: Observation) => { const n = value(metric); return n === null ? 'N/A' : n.toLocaleString('en-US', { maximumFractionDigits: metric?.unit === 'tokens/s' ? 1 : 0, minimumFractionDigits: metric?.unit === 'tokens/s' ? 1 : 0 }); };
 export const percent = (metric?: Observation) => { const n = value(metric); return n === null ? 'N/A' : `${Math.round(n * 100)}%`; };

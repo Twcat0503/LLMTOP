@@ -4,6 +4,7 @@
 
 - Shared collector, snapshot/history, counter epochs and explicit missing-data status.
 - vLLM and llama.cpp metric adapters; local host and optional NVIDIA providers.
+- Strata engine adapter (`engine = "strata"`): scrapes Strata's `/metrics` with `Accept: text/plain` to get the vLLM-named exposition with `model_name`, maps token counters, running/waiting gauges and the context-share gauge (semantics `native_context_share`, not a KV pool ratio), and reads optional llama.cpp-style `/slots`.
 - TUI, connected TUI, React Web, read-only REST/SSE, one-shot JSON and diagnostics.
 - Default TUI launch, non-TTY guidance, persistent user configuration and `llmtop init`.
 - `llmtop web`, browser launch after startup, headless URLs and SSH forwarding guidance.

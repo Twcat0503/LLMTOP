@@ -91,6 +91,25 @@ kind = "none"
 kind = "none"
 
 [[services]]
+id = "strata-local"
+label = "Local Strata server"
+host_id = "local"
+engine = "strata"
+enabled = false
+api_url = "http://127.0.0.1:8081"
+health_path = "/health"
+slots_path = "/slots"
+# /metrics defaults to JSON; LLMTOP negotiates the Prometheus text format with Accept: text/plain.
+# Optional API keys use [services.api_auth] kind = "bearer".
+# The KV field is the running request's context share, not KV pool occupancy.
+
+[services.api_auth]
+kind = "none"
+
+[services.metrics_auth]
+kind = "none"
+
+[[services]]
 id = "sglang-remote"
 label = "Remote SGLang"
 host_id = "gpu-remote"

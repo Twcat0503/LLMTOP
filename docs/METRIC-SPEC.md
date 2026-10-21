@@ -64,12 +64,15 @@ SSE／HTTP chunk 數不是 token 數；多個 token 可在同個 chunk，沒有 
 | vLLM | KV ratio | `vllm:kv_cache_usage_perc`（0–1） |
 | llama.cpp | prompt／generation totals | `llamacpp:prompt_tokens_total`、`llamacpp:tokens_predicted_total` |
 | llama.cpp | running／waiting | `llamacpp:requests_processing`、`llamacpp:requests_deferred` |
+| Strata | prompt／generation totals | `vllm:prompt_tokens_total`、`vllm:generation_tokens_total`（皆帶 `model_name` label；僅計已完成請求） |
+| Strata | running／waiting | `vllm:num_requests_running`、`vllm:num_requests_waiting` |
+| Strata | context 佔用比 | `vllm:kv_cache_usage_perc`＝執行中請求的 context 佔用（0–1），名稱沿用 KV 但語意不同，展示需標為 `native_context_share` |
 | SGLang | prompt／generation totals | `sglang:prompt_tokens_total`、`sglang:generation_tokens_total` |
 | SGLang | running／waiting | `sglang:num_running_reqs`、`sglang:num_queue_reqs`；grammar／PD queues 另列 |
 | SGLang | pools | `sglang:full_token_usage`、`sglang:token_usage`、`sglang:kv_used_tokens` 等，依版本能力啟用 |
 | Ollama | request usage／timings | `prompt_eval_count`、`eval_count`、`eval_duration`；沒有引擎 counter 的通用替代 |
 
-資料來源：[vLLM metrics design](https://docs.vllm.ai/en/stable/design/metrics/)、[vLLM production metrics](https://docs.vllm.ai/en/stable/usage/metrics/)、[llama.cpp server](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)、[SGLang metrics](https://github.com/sgl-project/sglang/blob/main/docs/docs/references/production_metrics.mdx)、[SGLang collector](https://github.com/sgl-project/sglang/blob/main/python/sglang/srt/observability/metrics_collector.py)。
+資料來源：[vLLM metrics design](https://docs.vllm.ai/en/stable/design/metrics/)、[vLLM production metrics](https://docs.vllm.ai/en/stable/usage/metrics/)、[llama.cpp server](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)、[SGLang metrics](https://github.com/sgl-project/sglang/blob/main/docs/docs/references/production_metrics.mdx)、[SGLang collector](https://github.com/sgl-project/sglang/blob/main/python/sglang/srt/observability/metrics_collector.py)、[Strata serve/prometheus.py](https://github.com/Niko1221/Strata/blob/main/serve/prometheus.py)。
 
 llama.cpp 的 throughput gauges 與 LLMTOP counter rate 不一定具有相同時間視窗；如果保留，名稱需標為 native throughput。slots 採樣只能補充 live state，不能作為完整累積 token counter 的主要來源。
 

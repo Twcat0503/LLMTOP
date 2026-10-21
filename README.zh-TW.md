@@ -6,7 +6,7 @@
 
 **自管 LLM 服務的 TUI／Web 監控工具**
 
-tokens、t/s、佇列深度、KV cache 與主機硬體 — vLLM、llama.cpp 與它們所在的機器，一個唯讀畫面全部看到。
+tokens、t/s、佇列深度、KV cache 與主機硬體 — vLLM、llama.cpp、Strata 與它們所在的機器，一個唯讀畫面全部看到。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](pyproject.toml)
@@ -19,7 +19,7 @@ tokens、t/s、佇列深度、KV cache 與主機硬體 — vLLM、llama.cpp 與�
 
 ## LLMTOP 是什麼？
 
-LLMTOP 是自管 LLM 推論服務的終端機（TUI）與 Web 儀表板。它把你跑的引擎 — vLLM、llama.cpp — 和背後的主機硬體放在同一個畫面：input／output tokens 與 tokens/sec、running／waiting 請求數、KV cache 使用率、CPU／RAM／swap，以及可取得的 NVIDIA 裝置資料。
+LLMTOP 是自管 LLM 推論服務的終端機（TUI）與 Web 儀表板。它把你跑的引擎 — vLLM、llama.cpp、Strata — 和背後的主機硬體放在同一個畫面：input／output tokens 與 tokens/sec、running／waiting 請求數、KV cache 使用率、CPU／RAM／swap，以及可取得的 NVIDIA 裝置資料。
 
 TUI 與 Web 共用同一個 collector、snapshot 與 history，兩端永遠顯示相同的數值。LLMTOP 預設唯讀：只輪詢觀測端點（`/metrics` 等），不發推論請求。
 
@@ -65,6 +65,7 @@ TUI 與 Web 共用同一個 collector、snapshot 與 history，兩端永遠顯�
 | --- | --- | --- | --- |
 | vLLM（OpenAI server） | 已實測（Linux） | token counters 與 t/s、running／waiting、原生 KV 比率（`/metrics`） | 已對 vLLM 0.29.0／Ubuntu 26.04 實測 |
 | llama.cpp server | 已實作，僅合成 fixtures | token counters、processing／deferred gauges（`/metrics`） | 需啟用 `--metrics`；實機 gate 尚未完成；context 容量不作 KV 使用率 |
+| Strata server | 已實作，僅合成 fixtures | token counters 與 t/s、running／waiting、model 名稱（`/metrics` 採 vLLM 命名） | `/metrics` 預設回傳 JSON，需以 `Accept: text/plain` 或 `?format=prometheus` 協商文字格式；KV 欄位為執行中請求的 context 佔用比而非 KV pool；實機 gate 尚未完成 |
 | SGLang server | 路線圖中 | — | 計畫於 M2 介接 |
 | Ollama | 路線圖中 | — | 計畫於 M2 介接 |
 
