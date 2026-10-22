@@ -47,6 +47,75 @@ def test_llama_context_is_not_kv(config, raw_llama):
     assert result.metrics["kv_cache_usage_ratio"].status == Status.UNSUPPORTED
 
 
+def test_strata_normalization_and_context_share_semantics(config, raw_strata):
+    service = config.services[0].model_copy(update={"engine": "strata"})
+    engine = EngineAdapter(service, Fetcher(None, config.monitor), RateTracker(10))
+    engine.normalize(parse_metrics(raw_strata), 10)
+    result = engine.normalize(
+        parse_metrics(raw_strata.replace(" 1000", " 1040").replace(" 2000", " 2080")), 12
+    )
+    assert result.model_name == "fixture-model"
+    assert result.metrics["input_tps"].value == 20
+    assert result.metrics["output_tps"].value == 40
+    assert result.metrics["engine_running_requests"].value == 1
+    assert result.metrics["engine_waiting_requests"].value == 2
+    kv = result.metrics["kv_cache_usage_ratio"]
+    assert kv.value == 0.25
+    assert kv.source_metric == "vllm:kv_cache_usage_perc"
+    assert kv.semantics == "native_context_share"
+
+
+async def test_strata_scrape_negotiates_prometheus_text(config, raw_strata):
+    seen = {}
+
+    def respond(request):
+        seen[request.url.path] = request.headers.get("accept")
+        return (
+            httpx.Response(200, text=raw_strata)
+            if request.url.path == "/metrics"
+            else httpx.Response(200, json=[{"id": 0, "is_processing": True}])
+            if request.url.path == "/slots"
+            else httpx.Response(200, text='{"status": "ok", "loaded": true}')
+        )
+
+    service = config.services[0].model_copy(update={"engine": "strata", "slots_path": "/slots"})
+    config = config.model_copy(update={"services": [service]})
+    async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+        result = await adapter(config, client).collect()
+    assert result.health == Health.REACHABLE
+    assert "text/plain" in seen["/metrics"]
+    assert any(c.metric == "slot_states" for c in result.capabilities)
+
+
+async def test_vllm_scrape_keeps_default_accept(config, raw_vllm):
+    seen = {}
+
+    def respond(request):
+        seen[request.url.path] = request.headers.get("accept")
+        return httpx.Response(200, text=raw_vllm)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+        result = await adapter(config, client).collect()
+    assert result.health == Health.REACHABLE
+    assert seen["/metrics"] == "*/*"
+
+
+async def test_strata_json_metrics_without_negotiation_report_error(config):
+    def respond(request):
+        return (
+            httpx.Response(200, text='{"engine": {"model": "x"}}')
+            if request.url.path == "/metrics"
+            else httpx.Response(200)
+        )
+
+    service = config.services[0].model_copy(update={"engine": "strata"})
+    config = config.model_copy(update={"services": [service]})
+    async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+        result = await adapter(config, client).collect()
+    assert result.health == Health.DEGRADED
+    assert result.metrics["engine_prompt_tokens_total"].status == Status.ERROR
+
+
 def test_reset_of_one_counter_rebaselines_both_rates(config, raw_vllm):
     engine = adapter(config)
     engine.normalize(parse_metrics(raw_vllm), 10)

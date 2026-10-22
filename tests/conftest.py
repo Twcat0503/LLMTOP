@@ -30,3 +30,8 @@ def raw_vllm():
 @pytest.fixture
 def raw_llama():
     return (Path(__file__).parent / "fixtures/llamacpp.prom").read_text()
+
+
+@pytest.fixture
+def raw_strata():
+    return (Path(__file__).parent / "fixtures/strata.prom").read_text()
