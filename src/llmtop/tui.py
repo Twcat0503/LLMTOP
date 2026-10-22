@@ -93,7 +93,12 @@ class MonitorApp(App):
         with Horizontal(id="filters"):
             yield Input(placeholder="Search services…", id="search")
             yield Select(
-                [("All engines", "all"), ("vLLM", "vllm"), ("llama.cpp", "llamacpp"), ("Strata", "strata")],
+                [
+                    ("All engines", "all"),
+                    ("vLLM", "vllm"),
+                    ("llama.cpp", "llamacpp"),
+                    ("Strata", "strata"),
+                ],
                 value="all",
                 allow_blank=False,
                 id="engine",
