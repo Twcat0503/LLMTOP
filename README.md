@@ -189,7 +189,7 @@ Current scope is service-level running/waiting counts — there is no full per-r
 
 ## Project status
 
-Verified: vLLM 0.29.0 and NVIDIA NVML on real Linux hardware (Ubuntu 26.04), Strata 0.1.44.1 on a live server (Ubuntu 24.04, 2026-10-22), 89 pytest and 6 Chromium tests, and the install/release audit flow. Still open: live llama.cpp, macOS/Apple GPU, sustained non-zero load, public CI, and an official release. Live status: [TODO](docs/TODO.md) and [validation record](docs/VALIDATION.md).
+Verified: vLLM 0.29.0 and NVIDIA NVML on real Linux hardware (Ubuntu 26.04), Strata 0.1.44.1 on a live server (Ubuntu 24.04, 2026-10-22), portable CI on Linux/macOS × Python 3.11/3.14 (green on `49439ba`), 89 pytest and 6 Chromium tests, and the install/release audit flow. Still open: live llama.cpp, macOS/Apple GPU, sustained non-zero load, and an official release. Live status: [TODO](docs/TODO.md) and [validation record](docs/VALIDATION.md).
 
 Existing install artifacts are historical validation products only; an official release must be rebuilt from a confirmed commit.
 

@@ -189,7 +189,7 @@ hosts (psutil · NVML)         ├─▶ collectors ─▶ snapshot + history �
 
 ## 專案狀態
 
-已驗證：Linux（Ubuntu 26.04）上的 vLLM 0.29.0 與 NVIDIA NVML 實測、Strata 0.1.44.1 實機驗證（Ubuntu 24.04，2026-10-22）、89 項 pytest 與 6 項 Chromium 測試、安裝與發佈審查流程。尚待完成：llama.cpp 實機、macOS／Apple GPU、真實非零持續負載、公開 CI 與正式 release。即時狀態見 [TODO](docs/TODO.md) 與 [驗證紀錄](docs/VALIDATION.md)。
+已驗證：Linux（Ubuntu 26.04）上的 vLLM 0.29.0 與 NVIDIA NVML 實測、Strata 0.1.44.1 實機驗證（Ubuntu 24.04，2026-10-22）、Linux／macOS × Python 3.11／3.14 portable CI（於 `49439ba` 全綠）、89 項 pytest 與 6 項 Chromium 測試、安裝與發佈審查流程。尚待完成：llama.cpp 實機、macOS／Apple GPU、真實非零持續負載與正式 release。即時狀態見 [TODO](docs/TODO.md) 與 [驗證紀錄](docs/VALIDATION.md)。
 
 既有安裝包僅作歷史驗證產物，正式發布須由確認的 commit 重新建置。
 

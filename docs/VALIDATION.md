@@ -49,4 +49,4 @@ LLMTOP 端到端（`doctor`、`once --json`）：health REACHABLE、model 名稱
 
 ## 未覆蓋
 
-真實 llama.cpp、macOS／Apple GPU、真實非零持續負載（Strata 已於 2026-10-22 取得短暫非零吞吐樣本，持續負載仍未做）、Firefox／Safari 與正式 GitHub CI 尚未通過。M1 未全部驗收；檢查與發佈 gate 見 [RELEASING](RELEASING.md)。
+真實 llama.cpp、macOS／Apple GPU、真實非零持續負載（Strata 已於 2026-10-22 取得短暫非零吞吐樣本，持續負載仍未做）與 Firefox／Safari 尚未通過；正式 GitHub CI 已於 2026-10-22 在 `49439ba` 全矩陣轉綠。M1 未全部驗收；檢查與發佈 gate 見 [RELEASING](RELEASING.md)。

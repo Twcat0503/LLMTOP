@@ -23,7 +23,7 @@ U05／U06 命令已存在，但無內建預設來源；未設定 `[update].sourc
 | S02 Strata 單元測試 | 已完成 | 去敏 fixture `tests/fixtures/strata.prom`（取自 0.1.44.1 實機）＋4 項測試；pytest 89 passed |
 | S03 README 快速開始範例 | 已修正 | 兩個 README 的 `[[hosts]]`／`[[services]]` 範例補上必填 `label`（原範例會被設定驗證擋下） |
 | S04 Strata 實機驗證 | 已完成 | 端點行為逐項相符；端到端五指標 OK、語意與 model 識別正確；短暫非零吞吐樣本與請求 usage 一致。範圍與限制見 VALIDATION 同日紀錄 |
-| S05 CI 轉綠 | 待推送後確認 | 修復推送後以實際 run 結果為準，未通過前不得宣稱 V04 |
+| S05 CI 轉綠 | 已通過 | run #7（`49439ba`，2026-10-22）Success：python 矩陣 ubuntu／macos × 3.11／3.14 共 4 jobs 與 web job 全過，26 秒 |
 
 持續非零負載（V03 範圍）、llama.cpp 實機（V01）、macOS（V02）、Firefox／Safari（V05）與首次發布（G05）不受本次影響，維持原狀。
 
@@ -55,7 +55,7 @@ U05／U06 命令已存在，但無內建預設來源；未設定 `[update].sourc
 - [ ] V01 真實 llama.cpp 固定版本、flags、OS、metrics／slots 與去敏 fixtures。
 - [ ] V02 macOS host／TUI／Web、Mac 讀 Linux engine；Apple GPU 深度資料另列 M2。
 - [ ] V03 真實非零 throughput／reset／gap／持續負載；目前真實採樣為 idle，非零時序由合成資料驗證。
-- [ ] V04 正式 repository 的 Linux／macOS、Python 3.11／3.14 portable CI。
+- [x] V04 正式 repository 的 Linux／macOS、Python 3.11／3.14 portable CI。（2026-10-22 CI run #7 於 `49439ba` 全矩陣通過；見 VALIDATION 與 Actions run 39719431642）
 - [ ] V05 Firefox／Safari 及對應 OS。
 
 M2–M4 引擎／請求／來源／Apple GPU／remote agent／container mappings／跨機 Web／其他平台仍未完成。詳見 [ROADMAP](ROADMAP.md) 與 [METRIC-SPEC](METRIC-SPEC.md)。
