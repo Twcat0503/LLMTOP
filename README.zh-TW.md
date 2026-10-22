@@ -17,6 +17,15 @@ tokens、t/s、佇列深度、KV cache 與主機硬體 — vLLM、llama.cpp、St
 
 > **狀態**：目前為 **0.1.0 未發佈的 alpha 基礎版本**。Linux 上的 vLLM 與 NVIDIA 已實測；llama.cpp 實機與 macOS gate 尚缺。證據見 [公開驗證摘要](docs/VALIDATION.md)，後續項目見 [路線](docs/ROADMAP.md)。
 
+## 實機畫面
+
+以下為 Linux（NVIDIA RTX 5070）上對真實 Strata server 的實際擷取。Web 儀表板與 TUI 讀取同一份 snapshot，數值與單位完全一致。
+
+| Web 儀表板 | TUI |
+| --- | --- |
+| ![LLMTOP Web 儀表板：真實 Strata 服務、output throughput 曲線與主機／NVIDIA GPU 資源](docs/assets/web-overview.png) | ![LLMTOP TUI：真實 Strata 服務的 input／output tokens per second](docs/assets/tui-services.png) |
+| 總覽：throughput 曲線、running／waiting 與主機＋GPU 資源 | 服務清單：tokens/sec、佇列深度、KV cache |
+
 ## LLMTOP 是什麼？
 
 LLMTOP 是自管 LLM 推論服務的終端機（TUI）與 Web 儀表板。它把你跑的引擎 — vLLM、llama.cpp、Strata — 和背後的主機硬體放在同一個畫面：input／output tokens 與 tokens/sec、running／waiting 請求數、KV cache 使用率、CPU／RAM／swap，以及可取得的 NVIDIA 裝置資料。

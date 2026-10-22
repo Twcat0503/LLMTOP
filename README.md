@@ -17,6 +17,15 @@ Tokens, throughput, queue depth, KV cache, and host hardware — vLLM, llama.cpp
 
 > **Status:** 0.1.0 is an **unreleased alpha baseline**. vLLM on Linux and NVIDIA GPUs are hardware-verified; live llama.cpp and macOS gates are still open. Evidence: [public validation summary](docs/VALIDATION.md) · Plans: [roadmap](docs/ROADMAP.md).
 
+## Screenshots
+
+Real captures from a live Strata server on Linux (NVIDIA RTX 5070). The Web dashboard and the TUI render the same snapshot — identical values and units.
+
+| Web dashboard | TUI |
+| --- | --- |
+| ![LLMTOP web dashboard showing a live Strata service, output throughput, and host/NVIDIA GPU stats](docs/assets/web-overview.png) | ![LLMTOP TUI showing a live Strata service with input/output tokens per second](docs/assets/tui-services.png) |
+| Overview: throughput chart, running/waiting, and host + GPU resources | Services table: tokens/sec, queue depth, KV cache |
+
 ## What is LLMTOP?
 
 LLMTOP is a terminal (TUI) and web dashboard for self-hosted LLM inference services. It puts the engines you run — vLLM, llama.cpp, Strata — and the host hardware behind them in a single view: input/output tokens and tokens/sec, running/waiting requests, KV cache usage, CPU/RAM/swap, and NVIDIA device stats where available.
