@@ -65,7 +65,7 @@ TUI 與 Web 共用同一個 collector、snapshot 與 history，兩端永遠顯�
 | --- | --- | --- | --- |
 | vLLM（OpenAI server） | 已實測（Linux） | token counters 與 t/s、running／waiting、原生 KV 比率（`/metrics`） | 已對 vLLM 0.29.0／Ubuntu 26.04 實測 |
 | llama.cpp server | 已實作，僅合成 fixtures | token counters、processing／deferred gauges（`/metrics`） | 需啟用 `--metrics`；實機 gate 尚未完成；context 容量不作 KV 使用率 |
-| Strata server | 已實作，僅合成 fixtures | token counters 與 t/s、running／waiting、model 名稱（`/metrics` 採 vLLM 命名） | `/metrics` 預設回傳 JSON，需以 `Accept: text/plain` 或 `?format=prometheus` 協商文字格式；KV 欄位為執行中請求的 context 佔用比而非 KV pool；實機 gate 尚未完成 |
+| Strata server | Linux 實機驗證 | token counters 與 t/s、running／waiting、model 名稱（`/metrics` 採 vLLM 命名） | `/metrics` 預設回傳 JSON，需以 `Accept: text/plain` 或 `?format=prometheus` 協商文字格式；KV 欄位為執行中請求的 context 佔用比而非 KV pool；已對 Strata 0.1.44.1 實機驗證（Ubuntu 24.04，2026-10-22），持續負載 gate 仍開放 |
 | SGLang server | 路線圖中 | — | 計畫於 M2 介接 |
 | Ollama | 路線圖中 | — | 計畫於 M2 介接 |
 
@@ -106,10 +106,12 @@ schema_version = 1
 
 [[hosts]]
 id = "local"
+label = "本機主機"
 collector = "local"
 
 [[services]]
 id = "vllm"
+label = "vLLM"
 host_id = "local"
 engine = "vllm"
 api_url = "http://127.0.0.1:8000"
@@ -187,7 +189,7 @@ hosts (psutil · NVML)         ├─▶ collectors ─▶ snapshot + history �
 
 ## 專案狀態
 
-已驗證：Linux（Ubuntu 26.04）上的 vLLM 0.29.0 與 NVIDIA NVML 實測、71 項 pytest 與 6 項 Chromium 測試、安裝與發佈審查流程。尚待完成：llama.cpp 實機、macOS／Apple GPU、真實非零持續負載、公開 CI 與正式 release。即時狀態見 [TODO](docs/TODO.md) 與 [驗證紀錄](docs/VALIDATION.md)。
+已驗證：Linux（Ubuntu 26.04）上的 vLLM 0.29.0 與 NVIDIA NVML 實測、Strata 0.1.44.1 實機驗證（Ubuntu 24.04，2026-10-22）、89 項 pytest 與 6 項 Chromium 測試、安裝與發佈審查流程。尚待完成：llama.cpp 實機、macOS／Apple GPU、真實非零持續負載、公開 CI 與正式 release。即時狀態見 [TODO](docs/TODO.md) 與 [驗證紀錄](docs/VALIDATION.md)。
 
 既有安裝包僅作歷史驗證產物，正式發布須由確認的 commit 重新建置。
 

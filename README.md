@@ -65,7 +65,7 @@ The TUI and the Web share one collector, one snapshot, and one history buffer, s
 | --- | --- | --- | --- |
 | vLLM (OpenAI server) | Verified on Linux | Token counters + t/s, running/waiting, native KV ratio via `/metrics` | Verified against vLLM 0.29.0 on Ubuntu 26.04 |
 | llama.cpp server | Implemented, synthetic fixtures only | Token counters, processing/deferred gauges via `/metrics` | Requires `--metrics`; live-server gate open; context capacity is not KV usage |
-| Strata server | Implemented, synthetic fixtures only | Token counters + t/s, running/waiting, model name via vLLM-named `/metrics` | `/metrics` defaults to JSON; scrape needs `Accept: text/plain` or `?format=prometheus`; the KV field is the running request's context share, not KV pool occupancy; live-server gate open |
+| Strata server | Verified on Linux | Token counters + t/s, running/waiting, model name via vLLM-named `/metrics` | `/metrics` defaults to JSON; scrape needs `Accept: text/plain` or `?format=prometheus`; the KV field is the running request's context share, not KV pool occupancy; verified against Strata 0.1.44.1 on Ubuntu 24.04 (2026-10-22), sustained-load gate open |
 | SGLang server | On the roadmap | — | Planned for M2 |
 | Ollama | On the roadmap | — | Planned for M2 |
 
@@ -106,10 +106,12 @@ schema_version = 1
 
 [[hosts]]
 id = "local"
+label = "Local host"
 collector = "local"
 
 [[services]]
 id = "vllm"
+label = "vLLM"
 host_id = "local"
 engine = "vllm"
 api_url = "http://127.0.0.1:8000"
@@ -187,7 +189,7 @@ Current scope is service-level running/waiting counts — there is no full per-r
 
 ## Project status
 
-Verified: vLLM 0.29.0 and NVIDIA NVML on real Linux hardware (Ubuntu 26.04), 71 pytest and 6 Chromium tests, and the install/release audit flow. Still open: live llama.cpp, macOS/Apple GPU, sustained non-zero load, public CI, and an official release. Live status: [TODO](docs/TODO.md) and [validation record](docs/VALIDATION.md).
+Verified: vLLM 0.29.0 and NVIDIA NVML on real Linux hardware (Ubuntu 26.04), Strata 0.1.44.1 on a live server (Ubuntu 24.04, 2026-10-22), 89 pytest and 6 Chromium tests, and the install/release audit flow. Still open: live llama.cpp, macOS/Apple GPU, sustained non-zero load, public CI, and an official release. Live status: [TODO](docs/TODO.md) and [validation record](docs/VALIDATION.md).
 
 Existing install artifacts are historical validation products only; an official release must be rebuilt from a confirmed commit.
 

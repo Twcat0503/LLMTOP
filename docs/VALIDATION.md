@@ -35,6 +35,18 @@ Ubuntu 26.04 LTS／x86_64、Python 3.14.4、Node 24.18.0 的固定依賴及 Pyth
 
 指定遠端節點在線，但非互動 SSH 認證失敗（退出碼 255），因此本次沒有重新執行 pytest、frontend build、安裝或實機測試。本機 Git 基礎已建立；尚無 remote、版本 tag、公開 CI 結果或 release。既有包不包含本次文件／Git 修訂，發布前必須由確認的 commit 重新建置。
 
+## 2026-10-22 Strata 適配器實機驗證
+
+本次在 research-u 本機執行，Ubuntu 24.04.4 LTS／x86_64、Python 3.12.3（uv 固定依賴）。被監控端為本機運行的 Strata server 0.1.44.1（單槽位、262 K context、RTX 5070），LLMTOP 為未發佈的 main 工作區。
+
+端點行為與 2026-10-21 之文件核對逐項相符：`/metrics` 預設 JSON，`Accept: text/plain` 或 `?format=prometheus` 得 vLLM 命名且帶 `model_name` 的文字格式；`/metrics/prometheus` 為 `llamacpp:*` 命名無 label；`/health` 恆 200 附 `loaded`；`/slots` 為 llama.cpp 風格；`/metrics` 與 `/slots` 需 bearer，`/health` 不需要。
+
+LLMTOP 端到端（`doctor`、`once --json`）：health REACHABLE、model 名稱自動識別、五個映射指標全 OK、`kv_cache_usage_ratio` 標記為 `native_context_share`、`slot_states` 為 conditional。發送一筆 150 token 完成請求後，15.03 秒視窗測得 input_tps 3.99／output_tps 9.98，與該請求 usage（60／150 tokens）一致；生成中另測得 running＝1 與非零 context 佔用比（0.0008／0.0025）。因 Strata counters 僅於完成時累計，rate 僅在完成事件落入視窗時非零——此為文件語意的實測確認。
+
+去敏 fixture（model 名稱代換、gauge 由 idle 值上調）入 `tests/fixtures/strata.prom`；新增 4 項 Strata 單元測試（映射與語意、Accept 協商、vLLM 預設 Accept 不變、JSON 未協商時回報 ERROR），pytest 89 passed。CI 失敗之根因為 `tui.py` 一列未過 `ruff format --check`，已修正。
+
+限制：僅 Strata 0.1.44.1、單機單槽位、短暫負載而非持續負載；未測 macOS、多 replicas 與 HTTP(S) 憑證路徑。
+
 ## 未覆蓋
 
-真實 llama.cpp、macOS／Apple GPU、真實非零持續負載、Firefox／Safari 與正式 GitHub CI 尚未通過。M1 未全部驗收；檢查與發佈 gate 見 [RELEASING](RELEASING.md)。
+真實 llama.cpp、macOS／Apple GPU、真實非零持續負載（Strata 已於 2026-10-22 取得短暫非零吞吐樣本，持續負載仍未做）、Firefox／Safari 與正式 GitHub CI 尚未通過。M1 未全部驗收；檢查與發佈 gate 見 [RELEASING](RELEASING.md)。

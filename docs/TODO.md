@@ -1,6 +1,6 @@
 # 目前狀態與開發代辦
 
-更新日期：2026-10-19。版本 0.1.0，未發佈的 M1 alpha 基礎版本。共用 collector、snapshot／history、rate／epoch、vLLM／llama.cpp、host／NVIDIA、TUI／Web／API／CLI 已建立。證據見 [VALIDATION](VALIDATION.md)。
+更新日期：2026-10-22。版本 0.1.0，未發佈的 M1 alpha 基礎版本。共用 collector、snapshot／history、rate／epoch、vLLM／llama.cpp／Strata、host／NVIDIA、TUI／Web／API／CLI 已建立。證據見 [VALIDATION](VALIDATION.md)。
 
 ## 日常使用與更新
 
@@ -14,6 +14,18 @@
 | U06 更新／復原 | 已實作，待驗收 | `llmtop update` 原子切換環境、保留前版並提示重啟；`llmtop rollback` 還原；下載、校驗或檢查失敗維持現行版本 |
 
 U05／U06 命令已存在，但無內建預設來源；未設定 `[update].source_url` 時不進行任何遠端檢查，也不把任意索引的同名套件視為官方來源。驗收需實際 release 資產與隔離環境重驗。
+
+## 本次 Strata 適配器收尾（2026-10-22）
+
+| 項目 | 狀態 | 結果 |
+| --- | --- | --- |
+| S01 CI run #6 失敗根因 | 已修復 | `tui.py` 引擎篩選列未過 `ruff format --check`；已格式化，本地 CI 四步驟全過 |
+| S02 Strata 單元測試 | 已完成 | 去敏 fixture `tests/fixtures/strata.prom`（取自 0.1.44.1 實機）＋4 項測試；pytest 89 passed |
+| S03 README 快速開始範例 | 已修正 | 兩個 README 的 `[[hosts]]`／`[[services]]` 範例補上必填 `label`（原範例會被設定驗證擋下） |
+| S04 Strata 實機驗證 | 已完成 | 端點行為逐項相符；端到端五指標 OK、語意與 model 識別正確；短暫非零吞吐樣本與請求 usage 一致。範圍與限制見 VALIDATION 同日紀錄 |
+| S05 CI 轉綠 | 待推送後確認 | 修復推送後以實際 run 結果為準，未通過前不得宣稱 V04 |
+
+持續非零負載（V03 範圍）、llama.cpp 實機（V01）、macOS（V02）、Firefox／Safari（V05）與首次發布（G05）不受本次影響，維持原狀。
 
 ## 本次 Git／發布收尾（2026-10-04）
 
